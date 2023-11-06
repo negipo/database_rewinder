@@ -63,7 +63,8 @@ end
 # Already loaded adapters (SQLite3Adapter, PostgreSQLAdapter, AbstractMysqlAdapter, and possibly another third party adapter)
 ::ActiveRecord::ConnectionAdapters::AbstractAdapter.descendants.each do |adapter|
   # Note: this would only prepend on AbstractMysqlAdapter and not on Mysql2Adapter because ```Mysql2Adapter < InsertRecorder``` becomes true immediately after AbstractMysqlAdapter prepends InsertRecorder
-  adapter.send :prepend, DatabaseRewinder::InsertRecorder unless adapter < DatabaseRewinder::InsertRecorder
+  # Note: In Rails 7.1, there is a possibility of overriding methods in ancestor classes, and it is necessary to ensure overriding in descendant classes, so this condition was removed. Beware of the possibility of being overridden multiple times.
+  adapter.send :prepend, DatabaseRewinder::InsertRecorder # unless adapter < DatabaseRewinder::InsertRecorder
 end
 
 # Third party adapters that might be loaded in the future
